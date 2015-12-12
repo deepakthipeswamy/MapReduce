@@ -1,0 +1,44 @@
+SSH to hadoop
+------------------------------
+ssh hadoop@localhost -p 422
+
+Start the Nodes:
+-----------------------------
+start-dfs.sh
+start-yarn.sh
+
+Set Path for running javac directly
+-------------------------------------------------
+export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
+
+Remove hdfs input folder
+-------------------------------------------------
+hadoop dfs -rmr input
+
+Copy local files to hdfs filesystem
+-------------------------------------------------
+hadoop dfs -copyFromLocal input inputhd
+
+Commands for compile, create jar and run (create compile.sh)
+------------------------------------------------------------------------
+hadoop dfs -rmr /user/hduser/tmpOutput (delete temp output folder)
+hadoop dfs -rmr /user/hadoop/output (delete output folder)
+hadoop@ubuntu:~/hadoop$ bin/hadoop com.sun.tools.javac.Main Weather.java
+hadoop@ubuntu:~/hadoop$ jar cf wc.jar Weather*.class
+
+Running the job
+--------------------------------------------------------------
+hadoop@ubuntu:~/hadoop$ hadoop jar wc.jar Weather input output
+
+Copy output from hdfs to local fileSystem
+-------------------------------------------------
+hadoop/bin/hadoop dfs -copyToLocal /user/hadoop/output finalOutput
+
+Display output on screen
+-------------------------------------------------
+hadoop dfs -cat output/part-r-00000
+
+Remove output directory (depends on where is the output directory is)
+---------------------------------------
+hadoop dfs -rmr /user/hduser/output
+hadoop dfs -rmr /user/hduser/tempoutput
